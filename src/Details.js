@@ -1,37 +1,28 @@
-import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useContext } from "react";
 import { Table } from "reactstrap";
+import ThemeContext from "./context/ThemeContext";
+import { useFetch } from "./services/useFetch";
 import ThemeColor from "./ThemeColor";
-import axios from "axios";
-const URL = "https://swapi.dev/api/";
 
-function Details({ detail, theme }) {
-  const [homeworld, setHomeworld] = useState();
+function Details({ detail }) {
+  const { data: homeworld } = useFetch(detail[0].homeworld);
 
-  const fetchData = async (url) => {
-    return axios.get(url).then((response) => {
-      return response.data;
-    });
-  };
-
-  useEffect(() => {
-    detail.map((ele, i) =>
-      fetchData(ele.homeworld).then((data) => setHomeworld(data.name))
-    );
-  }, [detail]);
+  const theme = useContext(ThemeContext);
+  const currentTheme = ThemeColor[theme];
 
   return (
     <div
       style={{
-        backgroundColor: `${ThemeColor[theme].backgroundColor}`,
-        color: `${ThemeColor[theme].textColor}`,
+        backgroundColor: `${currentTheme.backgroundColor}`,
+        color: `${currentTheme.textColor}`,
       }}
     >
       <h1>People Details:</h1>
       <Table
         style={{
-          backgroundColor: `${ThemeColor[theme].backgroundColor}`,
-          color: `${ThemeColor[theme].textColor}`,
+          backgroundColor: `${currentTheme.backgroundColor}`,
+          color: `${currentTheme.textColor}`,
         }}
       >
         <thead>
@@ -62,7 +53,7 @@ function Details({ detail, theme }) {
               <td>{ele.eye_color}</td>
               <td>{ele.birth_year}</td>
               <td>{ele.gender}</td>
-              <td>{homeworld}</td>
+              <td>{homeworld.name}</td>
               <td>{ele.vehicles}</td>
               <td>{ele.starships}</td>
               <td>{ele.created}</td>
